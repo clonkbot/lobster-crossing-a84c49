@@ -1,0 +1,447 @@
+:root {
+  --ocean-deep: #1a3a52;
+  --ocean-mid: #2a5a7a;
+  --ocean-light: #4a8ab0;
+  --sand: #f4e4c1;
+  --sand-dark: #d4c4a1;
+  --coral: #e74c3c;
+  --coral-dark: #c0392b;
+  --seafoam: #7fcdcd;
+  --sunset: #f39c12;
+  --white: #fff;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Grandstander', cursive;
+  background: var(--ocean-deep);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+.app-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  padding: 20px;
+  padding-bottom: 40px;
+}
+
+.ocean-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background:
+    radial-gradient(ellipse at 20% 80%, rgba(74, 138, 176, 0.4) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 20%, rgba(127, 205, 205, 0.3) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 50%, rgba(42, 90, 122, 0.5) 0%, transparent 70%),
+    linear-gradient(180deg, var(--ocean-deep) 0%, var(--ocean-mid) 50%, var(--ocean-light) 100%);
+  z-index: -2;
+}
+
+.bubbles {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: -1;
+  overflow: hidden;
+}
+
+.bubble {
+  position: absolute;
+  bottom: -50px;
+  background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.4), rgba(127, 205, 205, 0.2));
+  border-radius: 50%;
+  animation: rise linear infinite;
+}
+
+@keyframes rise {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 0.4;
+  }
+  100% {
+    transform: translateY(-100vh) scale(0.5);
+    opacity: 0;
+  }
+}
+
+.game-header {
+  text-align: center;
+  margin-bottom: 20px;
+  z-index: 10;
+}
+
+.title {
+  font-family: 'Titan One', cursive;
+  font-size: clamp(2rem, 6vw, 3.5rem);
+  color: var(--sand);
+  text-shadow:
+    3px 3px 0 var(--coral-dark),
+    6px 6px 0 rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  animation: titleBounce 2s ease-in-out infinite;
+}
+
+.title-icon {
+  font-size: 0.8em;
+  animation: wobble 1s ease-in-out infinite alternate;
+}
+
+@keyframes titleBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+@keyframes wobble {
+  0% { transform: rotate(-10deg); }
+  100% { transform: rotate(10deg); }
+}
+
+.score-display {
+  display: flex;
+  gap: 30px;
+  justify-content: center;
+  margin-top: 15px;
+}
+
+.score-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: rgba(244, 228, 193, 0.15);
+  padding: 10px 25px;
+  border-radius: 15px;
+  backdrop-filter: blur(5px);
+  border: 2px solid rgba(244, 228, 193, 0.3);
+}
+
+.score-label {
+  font-size: 0.85rem;
+  color: var(--seafoam);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-weight: 600;
+}
+
+.score-value {
+  font-family: 'Titan One', cursive;
+  font-size: 2rem;
+  color: var(--sand);
+}
+
+.score-value.high {
+  color: var(--sunset);
+}
+
+.game-area {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.game-board {
+  width: 400px;
+  height: 600px;
+  position: relative;
+  overflow: hidden;
+  border-radius: 20px;
+  box-shadow:
+    0 0 0 4px var(--sand),
+    0 0 0 8px var(--coral),
+    0 20px 60px rgba(0, 0, 0, 0.4);
+  background: var(--ocean-mid);
+}
+
+.lane {
+  position: absolute;
+  width: 100%;
+  height: 50px;
+  left: 0;
+}
+
+.lane-water {
+  background: linear-gradient(90deg,
+    var(--ocean-mid) 0%,
+    var(--ocean-light) 50%,
+    var(--ocean-mid) 100%
+  );
+  animation: waterShimmer 3s ease-in-out infinite;
+}
+
+@keyframes waterShimmer {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+.lane-sand {
+  background: linear-gradient(90deg,
+    var(--sand) 0%,
+    var(--sand-dark) 25%,
+    var(--sand) 50%,
+    var(--sand-dark) 75%,
+    var(--sand) 100%
+  );
+  background-size: 50px 50px;
+}
+
+.lane-safe {
+  background: linear-gradient(90deg,
+    #7cb342 0%,
+    #8bc34a 50%,
+    #7cb342 100%
+  );
+  position: relative;
+}
+
+.lane-safe::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    90deg,
+    transparent 0px,
+    transparent 20px,
+    rgba(0, 0, 0, 0.1) 20px,
+    rgba(0, 0, 0, 0.1) 25px
+  );
+}
+
+.lobster {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  z-index: 100;
+  transition: left 0.1s ease-out, top 0.1s ease-out;
+  filter: drop-shadow(2px 2px 3px rgba(0, 0, 0, 0.3));
+}
+
+.obstacle {
+  position: absolute;
+  z-index: 50;
+  filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.2));
+}
+
+.menu-overlay {
+  position: absolute;
+  inset: 0;
+  width: 400px;
+  height: 600px;
+  background: rgba(26, 58, 82, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.menu-content {
+  text-align: center;
+  padding: 40px;
+  color: var(--sand);
+}
+
+.menu-lobster {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+  animation: bounce 1s ease-in-out infinite;
+}
+
+.menu-lobster .lobster {
+  position: relative;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-15px); }
+}
+
+.menu-content h2 {
+  font-family: 'Titan One', cursive;
+  font-size: 2.5rem;
+  color: var(--coral);
+  margin-bottom: 15px;
+  text-shadow: 2px 2px 0 var(--coral-dark);
+}
+
+.menu-content p {
+  font-size: 1.1rem;
+  margin-bottom: 10px;
+  line-height: 1.6;
+  color: var(--seafoam);
+}
+
+.controls-info {
+  background: rgba(127, 205, 205, 0.15);
+  padding: 15px 25px;
+  border-radius: 15px;
+  margin: 20px 0;
+  border: 1px solid rgba(127, 205, 205, 0.3);
+}
+
+.controls-info p {
+  margin: 5px 0;
+  font-size: 0.95rem;
+}
+
+.start-btn {
+  font-family: 'Titan One', cursive;
+  font-size: 1.5rem;
+  padding: 15px 50px;
+  background: linear-gradient(180deg, var(--coral) 0%, var(--coral-dark) 100%);
+  color: var(--white);
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  box-shadow:
+    0 6px 0 #962d22,
+    0 10px 20px rgba(0, 0, 0, 0.3);
+  transition: all 0.15s ease;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.start-btn:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 8px 0 #962d22,
+    0 14px 25px rgba(0, 0, 0, 0.35);
+}
+
+.start-btn:active {
+  transform: translateY(4px);
+  box-shadow:
+    0 2px 0 #962d22,
+    0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.gameover .menu-content h2 {
+  color: var(--sunset);
+}
+
+.final-score {
+  font-family: 'Titan One', cursive;
+  font-size: 2rem;
+  color: var(--sand);
+  margin: 20px 0;
+  padding: 15px 30px;
+  background: rgba(243, 156, 18, 0.2);
+  border-radius: 15px;
+  border: 2px solid var(--sunset);
+}
+
+.touch-controls {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  margin-top: 20px;
+}
+
+.touch-row {
+  display: flex;
+  gap: 60px;
+}
+
+.touch-btn {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: linear-gradient(180deg, var(--sand) 0%, var(--sand-dark) 100%);
+  border: 3px solid var(--coral);
+  color: var(--ocean-deep);
+  font-size: 1.5rem;
+  cursor: pointer;
+  box-shadow: 0 4px 0 var(--coral-dark);
+  transition: all 0.1s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.touch-btn:active {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 var(--coral-dark);
+}
+
+.game-footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  text-align: center;
+  padding: 12px;
+  font-size: 0.75rem;
+  color: rgba(127, 205, 205, 0.5);
+  letter-spacing: 1px;
+  background: linear-gradient(transparent, rgba(26, 58, 82, 0.8));
+}
+
+@media (max-width: 450px) {
+  .game-board, .menu-overlay {
+    width: 90vw;
+    height: calc(90vw * 1.5);
+  }
+
+  .touch-controls {
+    display: flex;
+  }
+
+  .title {
+    font-size: 1.8rem;
+  }
+
+  .score-display {
+    gap: 15px;
+  }
+
+  .score-item {
+    padding: 8px 15px;
+  }
+
+  .score-value {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 350px) {
+  .menu-content {
+    padding: 20px;
+  }
+
+  .menu-content h2 {
+    font-size: 1.8rem;
+  }
+
+  .start-btn {
+    font-size: 1.2rem;
+    padding: 12px 35px;
+  }
+}
